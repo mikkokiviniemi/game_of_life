@@ -39,7 +39,9 @@ int get_n_alive_neighbors(const GameBoard& board, int cur_cell_row, int cur_cell
     int n_rows = board.size();
 
 
+    // Start from previous row (-1)
     for (int row = -1; row < 2; row++){ 
+        // Start from previous col
         for (int col = -1; col < 2; col++){
 
             int neighbor_row = row + cur_cell_row;
@@ -58,15 +60,23 @@ int get_n_alive_neighbors(const GameBoard& board, int cur_cell_row, int cur_cell
 // Updates board based on the rules of Game of Life
 GameBoard update(const GameBoard& current_board){
 
-    // create a new board with same size
-    GameBoard updated_board = create_board(current_board[0].size(), current_board.size());
+    int n_cols = current_board[0].size();
+    int n_rows = current_board.size();
 
-    for (int row = 0; row < current_board.size(); row++){
-        for (int col = 0; col < current_board[0].size(); col++){
+    // create a new board with same size
+    GameBoard updated_board = create_board(n_cols, n_rows);
+
+    for (int row = 0; row < n_rows; row++){
+        for (int col = 0; col < n_cols; col++){
+
+            // logic is based on alive neighbors, count them
             int n_neighbours = get_n_alive_neighbors(current_board, row, col);
+
+            // under or over population
             if (current_board[row][col] == 1 && n_neighbours < 2 || n_neighbours > 3){
                 updated_board[row][col] = 0;
             }
+            // keep alive or birth a new one
             else if((current_board[row][col] == 1) && (n_neighbours >= 2 && n_neighbours <= 3) || (current_board[row][col] == 0 && n_neighbours == 3)){
                 updated_board[row][col] = 1;
             }
