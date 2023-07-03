@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/conway.exe.dir/main.cpp.o -o conway.exe  utils/libUtils.a 

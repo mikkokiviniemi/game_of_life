@@ -56,6 +56,20 @@ int get_n_alive_neighbors(const GameBoard& board, int cur_cell_row, int cur_cell
 }
 
 
+bool can_spawn(int cur_pos_value, int n_neighbours){
+    return cur_pos_value == 0 && n_neighbours == 3;
+}
+
+bool is_over_populated(int cur_pos_value, int n_neighbours){
+    return cur_pos_value == 1 && n_neighbours > 3;
+}
+
+bool is_under_populated(int cur_pos_value, int n_neighbours){
+    return cur_pos_value == 1 && n_neighbours < 2;
+}
+
+
+
 
 // Updates board based on the rules of Game of Life
 GameBoard update(const GameBoard& current_board){
@@ -69,15 +83,17 @@ GameBoard update(const GameBoard& current_board){
     for (int row = 0; row < n_rows; row++){
         for (int col = 0; col < n_cols; col++){
 
+            int cur_cell_value {current_board[row][col]};
+
             // logic is based on alive neighbors, count them
             int n_neighbours = get_n_alive_neighbors(current_board, row, col);
 
             // under or over population
-            if (current_board[row][col] == 1 && n_neighbours < 2 || n_neighbours > 3){
+            if (is_under_populated(cur_cell_value, n_neighbours) || is_over_populated(cur_cell_value, n_neighbours)){
                 updated_board[row][col] = 0;
             }
             // keep alive or birth a new one
-            else if((current_board[row][col] == 1) && (n_neighbours >= 2 && n_neighbours <= 3) || (current_board[row][col] == 0 && n_neighbours == 3)){
+            else if((current_board[row][col] == 1) || can_spawn(cur_cell_value, n_neighbours)){
                 updated_board[row][col] = 1;
             }
         }
@@ -91,10 +107,16 @@ int main(int argc, char const *argv[])
 {
     GameBoard  board = create_board(5,6);
 
+    board[2][0]=1;
+    board[2][1]=1;
+    board[2][2]=1;
+    board[1][2]=1;
+    board[0][1]=1;
+/*
     board[1][1] = 1;
     board[1][2] = 1;
     board[1][3] = 1;
-/*     board[2][1] = 1;
+    board[2][1] = 1;
     board[2][2] = 1;
     board[2][3] = 1;
     board[3][1] = 1;
@@ -102,19 +124,14 @@ int main(int argc, char const *argv[])
     board[3][3] = 1;
   */
 
-    print_board(board);
-
-    board = update(board);
-
-    std::cout << "\n";
-    print_board(board);
-    
-    std::cout << "\n";
-    board = update(board);
-    print_board(board);
-
+    for(int i = 0; i < 20; i++){
+        print_board(board);
+        board = update(board);
+        std::cout << "\n";
+    }
 
 /*     
+    
     std::cout << board.size() << board[0].size();
 
     std::cout << "\n*** Conway's Game of Life ***\n";
