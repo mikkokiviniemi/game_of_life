@@ -138,9 +138,9 @@ void Game::reset_board_random(){
 
 void Game::render()
 {
-    SDL_Rect rect;
-    rect.w = SCREEN_WIDTH / GRID_WIDTH;
-    rect.h = SCREEN_WIDTH / GRID_HEIGHT;
+    SDL_FRect rect;
+    rect.w = static_cast<float>(SCREEN_WIDTH) / GRID_WIDTH;
+    rect.h = static_cast<float>(SCREEN_WIDTH) / GRID_HEIGHT;
 
     // Clear screen and set all as non alive cells
     SDL_SetRenderDrawColor(renderer, 0x1E, 0x1E, 0x1E, 0xFF);
@@ -148,18 +148,17 @@ void Game::render()
 
     // Render cell color alive
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xCC, 0x00, 0xFF);
-    
+
     // Color all alive cells
     for (size_t y = 0; y < gameboard.size(); y++){
         for (size_t x = 0; x < gameboard[0].size(); x++){
             if (gameboard[y][x] == 1){
                 rect.x = x * rect.w;
                 rect.y = y * rect.h;
-                SDL_RenderFillRect(renderer, &rect);
+                SDL_RenderFillRectF(renderer, &rect);
             }
         }
-    }
-    
+    }  
     // Update Screen
     SDL_RenderPresent(renderer);
 }

@@ -6,10 +6,17 @@
 
 
 
-int main(int argc, char const *argv[])
+int main(int argc, char* argv[])
 {
 
-    GameBoard  board = create_board(300, 300);
+    std::string arg1 = argv[1];
+    int width = std::stoi(arg1);
+    std::string arg2 = argv[2];
+    int height = std::stoi(arg1);
+    
+
+    GameBoard  board = create_board(width,height);
+
 
 /*     board[2][0]=1;
     board[2][1]=1;
