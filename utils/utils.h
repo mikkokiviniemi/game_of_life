@@ -2,6 +2,7 @@
 #define UTILS
 
 #include <vector>
+#include <string>
 
 using GameBoard = std::vector<std::vector<int>>;
 
@@ -9,6 +10,7 @@ using GameBoard = std::vector<std::vector<int>>;
 // Random between, hidden from main view
 namespace rndBtw{int randomBetween(int min, int max);};
 
+void print_msg(const std::string&);
 
 GameBoard create_board(int width, int height);
 
