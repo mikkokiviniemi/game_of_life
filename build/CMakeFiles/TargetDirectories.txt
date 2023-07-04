@@ -1,6 +1,0 @@
-/home/mikkoki/game_of_life/build/CMakeFiles/conway.dir
-/home/mikkoki/game_of_life/build/CMakeFiles/edit_cache.dir
-/home/mikkoki/game_of_life/build/CMakeFiles/rebuild_cache.dir
-/home/mikkoki/game_of_life/build/utils/CMakeFiles/Utils.dir
-/home/mikkoki/game_of_life/build/utils/CMakeFiles/edit_cache.dir
-/home/mikkoki/game_of_life/build/utils/CMakeFiles/rebuild_cache.dir
