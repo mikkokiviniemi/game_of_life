@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 3.20)
 project(conway)
 
-add_executable(${PROJECT_NAME} main.cpp)
+
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
+
+add_executable(${PROJECT_NAME} main.cpp ${sources})
 
 add_subdirectory(utils)
-add_subdirectory(external)
+add_subdirectory(game)
 
-target_link_libraries(${PROJECT_NAME} Utils imqui)
+target_link_libraries(${PROJECT_NAME} Utils Game ${SDL2_LIBRARIES})
