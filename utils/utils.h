@@ -26,6 +26,6 @@ bool is_under_populated(int cur_pos_value, int n_neighbours);
 
 GameBoard update_board(const GameBoard &current_board);
 
-
+void file_to_board(GameBoard &current_board, std::string& file_name);
 
 #endif // UTILS

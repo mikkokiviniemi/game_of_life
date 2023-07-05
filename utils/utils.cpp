@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <fstream>
+#include <sstream>
 
 
 // print to console
@@ -115,4 +117,42 @@ GameBoard update_board(const GameBoard& current_board){
         
     }
     return updated_board;
+}
+
+
+// Gets things from txt file to board
+void file_to_board(GameBoard& current_board, std::string& file_name){
+
+    std::ifstream file_stream(file_name);
+
+    //Check if file can be opened.
+    if (!file_stream.is_open()) {
+        std::cout << "Failed to open file \n";
+        return;
+    }
+
+    int n_cols = current_board[0].size();
+    int n_rows = current_board.size();
+
+    // create a new board with same size
+    GameBoard updated_board = create_board(n_cols, n_rows);
+
+    //Insert to new board from file
+    for (int row = 0; row < n_rows; row++){
+        std::string line;
+        std::getline(file_stream, line);
+
+        for (int col = 0; col < n_cols; col++){
+            if(line[col] == '1') {
+                updated_board[row][col] = 1;
+            }
+            else {
+                updated_board[row][col] = 0;
+            }
+        }
+    }
+
+    //Updates current board
+    current_board = updated_board;
+
 }
