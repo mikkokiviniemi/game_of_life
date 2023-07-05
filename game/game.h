@@ -34,6 +34,11 @@ private:
     SDL_Window * window = nullptr;
     SDL_Renderer * renderer = nullptr;
 
+    // Viewports to info and game layouts
+    SDL_Rect topview;
+    SDL_Rect bottomview;
+
+
     void gameLoop();
     void render();
     void update();
@@ -44,5 +49,7 @@ private:
 };
 
 
+SDL_Rect create_layout(int x, int y, int w, int h);
 
 #endif
+

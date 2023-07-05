@@ -4,6 +4,7 @@
 #include <random>
 #include <fstream>
 #include <sstream>
+#include <array>
 
 
 // print to console
@@ -140,19 +141,36 @@ void file_to_board(GameBoard& current_board, std::string& file_name){
     //Insert to new board from file
     for (int row = 0; row < n_rows; row++){
         std::string line;
-        std::getline(file_stream, line);
-
-        for (int col = 0; col < n_cols; col++){
-            if(line[col] == '1') {
-                updated_board[row][col] = 1;
-            }
-            else {
-                updated_board[row][col] = 0;
+        if(std::getline(file_stream, line)){
+            for (int col = 0; col < n_cols; col++){
+                if(line[col] == '1') {
+                    updated_board[row][col] = 1;
+                }
+                else {
+                    updated_board[row][col] = 0;
+                }
             }
         }
     }
 
     //Updates current board
     current_board = updated_board;
+    file_stream.close();
 
+}
+
+
+// Unpack numbers from cmd char* to int vector
+std::vector<int> unpack_size(char** begin, char** end){
+    std::vector<int> size;
+    try{
+        for (auto it = begin; it != end; it++){
+            size.push_back(std::stoi(*it));
+        }
+    }
+    catch(const std::exception& e){
+        return size;
+    }
+
+    return size;    
 }
