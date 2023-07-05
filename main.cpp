@@ -7,8 +7,10 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
+#include <algorithm>
 
 
+namespace fs = std::filesystem;
 
 
 // Key help
@@ -17,9 +19,21 @@ const std::array<std::string, 4> HELP {"r        init random setup",
                                        "enter    restart",
                                        "esc      quit"};
 
+// CMD option messages
+const std::array<std::string, 2> CMD_OPTIONS{"-p",
+                                             "-s"};
+
+// CMD help messages
+const std::array<std::string, 2> CMD_HELP{"-p  [string]  path to pattern",
+                                          "-s  [int int] Game layout size"};
+
+
 // Messages
-const std::string ERROR_MESSAGE = "Invalid size! Size must be atleast 3x3 and less than 640x640. Using default values";
-const std::string NO_ARGS_MESSAGE = "No args supplied. Using default size.";
+const std::string ERROR_SIZE = "Invalid size! Size must be atleast 3x3 and less than 640x640. Using default values";
+const std::string NO_ARGS_MESSAGE = "No args supplied. Using default size of 50x50.";
+
+
+
 
 
 
@@ -37,16 +51,6 @@ std::vector<int> cmd_get_size(char** begin){
 }
 
 
-// print keys to user
-void print_help(){
-    std::cout << "Keys to operate the program\n";
-    for (auto &&i : HELP){
-        std::cout << i << "\n";
-    }
-    std::cout << "\n";
-}
-
-
 bool is_valid_size(std::vector<int>& size){
     int w = size[0];
     int h = size[1];
@@ -54,46 +58,76 @@ bool is_valid_size(std::vector<int>& size){
 }
 
 
+// Find option location
+const std::string* findOption(const std::string* begin, const std::string* end, std::string query){
+    return std::find(begin, end, query);
+}
+
+
+// handle commands here (eq. check if following args are qualifiers needed)
+void handleOptions(char** begin, char** end, const std::string& option, GameBoard& board){
+
+    // calculate how many arguments follow this option
+    int dist = std::distance(begin, end);
+    
+    // size
+    if (option == CMD_OPTIONS[1] && dist >= 2){
+        // check if two numbers follow
+        std::vector<int> size = unpack_size(begin, end);
+        // two numbers found after -s
+        if (size.size() != 2){
+            print_msg(ERROR_SIZE);
+        }
+        // init board with user defined size
+        board = create_board(size[0], size[1]);
+    }
+    // path
+    else if(option == CMD_OPTIONS[0] && dist >= 1){
+        // check if valid path
+        if (!fs::exists(*begin)){
+            std::cout << "File not found!\n";
+        }
+        // init board with 
+        std::string filepath = *begin;
+        file_to_board(board, filepath);
+
+    }
+}
+
+
+
 int main(int argc, char* argv[])
 {
 
-    // default size of the board
-    int width = 50;
-    int height = 50;
+    GameBoard  board = create_board(50, 50);
 
-    // if args supplied find the size (w,h)
-    if (argc == 1){print_msg(NO_ARGS_MESSAGE);}
-    else if (argc == 3){
-        std::vector<int> size = cmd_get_size(argv + 1);
-        if (is_valid_size(size)){
-            width = size[0];
-            height = size[1];
-        }
-        else{print_msg(ERROR_MESSAGE);}
-    }else {print_msg(ERROR_MESSAGE);}
+    char** begin = argv + 1;
+    char** end = (argv + argc);
 
 
-    std::cout << "Initializing The Game of Life with size "
-              << width << "x" << height <<"\n\n";
+    // no args
+    if (argc > 1){
+        // find matching loc (location of argument end() if not found)
+        std::cout << "enter loop " << argc << "\n";
+        
+         // find matching loc (location of argument end() if not found)
+        for (auto it = begin; it != end; it++){
+            const std::string* loc = findOption(CMD_OPTIONS.begin(), CMD_OPTIONS.end(), *it);
 
-    print_help();
-    GameBoard  board = create_board(width,height);
+            // find args following this option eq. (-s int int)
+            handleOptions(it + 1, end, *loc, board);
+        } 
+    }else {
+        print_msg(NO_ARGS_MESSAGE);
+    }
 
-
-/*     board[2][0]=1;
-    board[2][1]=1;
-    board[2][2]=1;
-    board[1][2]=1;
-    board[0][1]=1;
-
-    board[10][9]=1;
-    board[10][10]=1;
-    board[10][11]=1; */
-
+    print_msg("Set size before loading from a file");
+    print_help(CMD_HELP, "These are the command line options");
+    print_help(HELP, "Keys to control the program");
 
     //GUI
     Game game {board};
-    game.run();
-    
+    game.run(); 
+      
     return 0;
 }

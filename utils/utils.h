@@ -3,8 +3,22 @@
 
 #include <vector>
 #include <string>
+#include <array>
+#include <iostream>
 
 using GameBoard = std::vector<std::vector<int>>;
+
+
+
+// print keys to user
+template<size_t S>
+void print_help(const std::array<std::string, S> list, std::string msg){
+    std::cout << msg << "\n";
+    for (auto &&i : list){
+        std::cout << i << "\n";
+    }
+    std::cout << "\n";
+}
 
 
 // Random between, hidden from main view
@@ -27,5 +41,7 @@ bool is_under_populated(int cur_pos_value, int n_neighbours);
 GameBoard update_board(const GameBoard &current_board);
 
 void file_to_board(GameBoard &current_board, std::string& file_name);
+
+std::vector<int> unpack_size(char **begin, char **end);
 
 #endif // UTILS

@@ -7,10 +7,21 @@
 
 // Initialize gameboard size 
 Game::Game(GameBoard board) : gameboard(board), org_gameboard(board),
-                              GRID_HEIGHT(board.size()), GRID_WIDTH(board[0].size()){};
+                              GRID_HEIGHT(board.size()), GRID_WIDTH(board[0].size()),
+                              topview(create_layout(0,0, SCREEN_WIDTH, 40)),
+                              bottomview(create_layout(0, 40, SCREEN_WIDTH, SCREEN_HEIGHT - 40)){};
 
 
 
+// Create layout for drawing
+SDL_Rect create_layout(int x, int y, int w, int h){
+    SDL_Rect layout {x, y, w, h};
+    return layout;
+}
+
+
+
+// Start the game
 void Game::run()
 {
     // Initialize SDL
@@ -37,6 +48,9 @@ void Game::run()
         std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << "\n";
         return;
     }
+
+    // TODO add layouts here
+
 
     running = true;
     gameLoop();
