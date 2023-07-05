@@ -4,6 +4,11 @@
 #include <random>
 
 
+// print to console
+void print_msg(const std::string& msg){
+    std::cout << msg << "\n";
+}
+
 // Random values between min & max
 namespace rndBtw{
 

@@ -14,28 +14,28 @@ Game::Game(GameBoard board) : gameboard(board), org_gameboard(board),
 void Game::run()
 {
     // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0){
         std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << "\n";
-        exit(EXIT_FAILURE);
+        return;
     }
 
     // Create Window
-    window = SDL_CreateWindow("Conway's Game of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Conway's Game of Life",
+                              SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED,
+                              SCREEN_WIDTH, SCREEN_HEIGHT,
+                              SDL_WINDOW_SHOWN);
 
-    if (!window)
-    {
-        std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
-        exit(EXIT_FAILURE);
+    if (!window){
+        std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
+        return;
     }
 
     // Create renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer)
-    {
-        std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << "\n";
-        exit(EXIT_FAILURE);
+    if (!renderer){
+        std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << "\n";
+        return;
     }
 
     running = true;
@@ -124,23 +124,20 @@ void Game::update()
 
 
 void Game::reset_board_random(){
-    for (size_t row = 0; row < gameboard.size(); row++)
-    {
-        for (size_t col = 0; col < gameboard[0].size(); col++)
-        {
-            if(rndBtw::randomBetween(0, 1)){
-                gameboard[row][col] = 1;
-            }
+    for (size_t row = 0; row < gameboard.size(); row++){
+        for (size_t col = 0; col < gameboard[0].size(); col++){
+            gameboard[row][col] = rndBtw::randomBetween(0, 1);
         }
-        
     }
 }
 
 void Game::render()
 {
-    SDL_FRect rect;
-    rect.w = static_cast<float>(SCREEN_WIDTH) / GRID_WIDTH;
-    rect.h = static_cast<float>(SCREEN_WIDTH) / GRID_HEIGHT;
+    SDL_Rect rect;
+    int w = SCREEN_WIDTH / GRID_WIDTH;
+    int h = SCREEN_HEIGHT / GRID_HEIGHT;
+    int padw = SCREEN_WIDTH % GRID_WIDTH;
+    int padh = SCREEN_HEIGHT % GRID_HEIGHT;
 
     // Clear screen and set all as non alive cells
     SDL_SetRenderDrawColor(renderer, 0x1E, 0x1E, 0x1E, 0xFF);
@@ -150,14 +147,26 @@ void Game::render()
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xCC, 0x00, 0xFF);
 
     // Color all alive cells
+    int cur_y {0};
     for (size_t y = 0; y < gameboard.size(); y++){
+
+        int cur_x {0};
+        int row_pad {padw};
+
         for (size_t x = 0; x < gameboard[0].size(); x++){
+            rect.x = cur_x;
+            rect.y = cur_y;
+            rect.w = w + (row_pad > 0);
+            rect.h = h + (padh > 0);
+
             if (gameboard[y][x] == 1){
-                rect.x = x * rect.w;
-                rect.y = y * rect.h;
-                SDL_RenderFillRectF(renderer, &rect);
+                SDL_RenderFillRect(renderer, &rect);
             }
+            cur_x += rect.w;
+            row_pad--;
         }
+        cur_y += rect.h;
+        padh--;
     }  
     // Update Screen
     SDL_RenderPresent(renderer);

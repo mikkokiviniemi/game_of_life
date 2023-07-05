@@ -1,2 +1,6 @@
 changelog:
   priorities and issues created
+  game logic added
+  gui added
+  gui pad fix with support for older sdl
+  cmd args with messages and error handling
