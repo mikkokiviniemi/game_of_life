@@ -5,6 +5,10 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <filesystem>
+#include <fstream>
+
+
 
 
 // Key help
@@ -14,7 +18,7 @@ const std::array<std::string, 4> HELP {"r        init random setup",
                                        "esc      quit"};
 
 // Messages
-const std::string ERROR_MESSAGE = "Invalid size! Size must be atleast 3x3. Using default values";
+const std::string ERROR_MESSAGE = "Invalid size! Size must be atleast 3x3 and less than 640x640. Using default values";
 const std::string NO_ARGS_MESSAGE = "No args supplied. Using default size.";
 
 
@@ -43,6 +47,13 @@ void print_help(){
 }
 
 
+bool is_valid_size(std::vector<int>& size){
+    int w = size[0];
+    int h = size[1];
+    return (w >= 3 && w < SCREEN_WIDTH) && (h >= 3 && h < SCREEN_HEIGHT);
+}
+
+
 int main(int argc, char* argv[])
 {
 
@@ -54,7 +65,7 @@ int main(int argc, char* argv[])
     if (argc == 1){print_msg(NO_ARGS_MESSAGE);}
     else if (argc == 3){
         std::vector<int> size = cmd_get_size(argv + 1);
-        if (size[0] >= 3 && size[1] >= 3){
+        if (is_valid_size(size)){
             width = size[0];
             height = size[1];
         }

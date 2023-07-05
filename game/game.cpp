@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 
 
+
 // Initialize gameboard size 
 Game::Game(GameBoard board) : gameboard(board), org_gameboard(board),
                               GRID_HEIGHT(board.size()), GRID_WIDTH(board[0].size()){};

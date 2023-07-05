@@ -7,6 +7,10 @@
 #include <SDL2/SDL_image.h>
 
 
+const int SCREEN_WIDTH   = 640;
+const int SCREEN_HEIGHT  = 640;
+
+
 class Game
 {
 public:
@@ -26,8 +30,6 @@ private:
     const int FRAME_RATE     = 40;
     const int GRID_WIDTH     = 50;
     const int GRID_HEIGHT    = 50;
-    const int SCREEN_WIDTH   = 640;
-    const int SCREEN_HEIGHT  = 640;
 
     SDL_Window * window = nullptr;
     SDL_Renderer * renderer = nullptr;
