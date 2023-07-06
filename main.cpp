@@ -1,7 +1,6 @@
 #include "utils/utils.h"
 #include "game/game.h"
 #include <iostream>
-#include <array>
 #include <vector>
 #include <array>
 #include <string>
@@ -12,12 +11,6 @@
 
 namespace fs = std::filesystem;
 
-
-// Key help
-const std::array<std::string, 4> HELP {"r        init random setup",
-                                       "space    pause",
-                                       "enter    restart",
-                                       "esc      quit"};
 
 // CMD option messages
 const std::array<std::string, 2> CMD_OPTIONS{"-p",
@@ -33,10 +26,6 @@ const std::string ERROR_SIZE = "Invalid size! Size must be atleast 3x3 and less 
 const std::string NO_ARGS_MESSAGE = "No args supplied. Using default size of 50x50.";
 
 
-
-
-
-
 // Get size from cmd args. Convert string to int
 std::vector<int> cmd_get_size(char** begin){
     std::vector<int> size {0,0};
@@ -50,7 +39,7 @@ std::vector<int> cmd_get_size(char** begin){
     return size;
 }
 
-
+// Check if user defined board size is valid
 bool is_valid_size(std::vector<int>& size){
     int w = size[0];
     int h = size[1];
@@ -107,8 +96,6 @@ int main(int argc, char* argv[])
 
     // no args
     if (argc > 1){
-        // find matching loc (location of argument end() if not found)
-        std::cout << "enter loop " << argc << "\n";
         
          // find matching loc (location of argument end() if not found)
         for (auto it = begin; it != end; it++){
@@ -121,9 +108,12 @@ int main(int argc, char* argv[])
         print_msg(NO_ARGS_MESSAGE);
     }
 
+    // Print command line help to terminal.
+    std::cout << "These are the command line options" << "\n";
     print_msg("Set size before loading from a file");
-    print_help(CMD_HELP, "These are the command line options");
-    print_help(HELP, "Keys to control the program");
+    for (auto &&i : CMD_HELP){
+        std::cout << i << "\n";
+    }
 
     //GUI
     Game game {board};
