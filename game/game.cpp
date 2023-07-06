@@ -1,25 +1,58 @@
 #include "game.h"
+#include "../utils/utils.h"
 #include <iostream>
 #include <string>
 #include <ctime>
 #include <SDL2/SDL.h>
 
 
+
 // Initialize gameboard size 
 Game::Game(GameBoard board) : gameboard(board), org_gameboard(board),
-                              GRID_HEIGHT(board.size()), GRID_WIDTH(board[0].size()),
-                              topview(create_layout(0,0, SCREEN_WIDTH, 40)),
-                              bottomview(create_layout(0, 40, SCREEN_WIDTH, SCREEN_HEIGHT - 40)){};
+                              GRID_HEIGHT(board.size()), GRID_WIDTH(board[0].size()){};
 
 
 
-// Create layout for drawing
-SDL_Rect create_layout(int x, int y, int w, int h){
-    SDL_Rect layout {x, y, w, h};
-    return layout;
+// Loads .bmp image
+bool Game::load_texture(std::string path){
+
+    // To draw a image we need to create a temporary surface object.
+	SDL_Surface* loaded_surface = SDL_LoadBMP(path.c_str());
+
+	if(loaded_surface == nullptr){
+		std::cerr << "Unable to load image." << IMG_GetError() << "\n";
+        return false;
+	}
+
+    //Create texture from surface pixels
+    info_texture = SDL_CreateTextureFromSurface(renderer, loaded_surface);
+    if(info_texture == nullptr){
+        std::cerr << "Unable to create texture." << SDL_GetError() << "\n";
+        return false;
+    }
+
+    // Setup infoview as a square in the middle of the screen
+    infoview.x = (SCREEN_WIDTH - loaded_surface->w) / 2;
+    infoview.y = (SCREEN_HEIGHT - loaded_surface->h) / 2;
+    infoview.w = loaded_surface->w;
+    infoview.h = loaded_surface->h;
+
+    // Remove temporary loaded surface
+    SDL_FreeSurface(loaded_surface);
+
+	return true;
 }
 
-
+// Draw texture to screen
+void Game::render_info(){
+    // Render texture to screen
+    SDL_RenderSetViewport(renderer, &infoview);
+    SDL_RenderCopy(renderer, info_texture, NULL, NULL);
+    // Reset renderer back to whole window
+    SDL_RenderSetViewport(renderer, NULL);
+    // Draw image
+    SDL_RenderPresent(renderer);
+}
 
 // Start the game
 void Game::run()
@@ -37,58 +70,93 @@ void Game::run()
                               SCREEN_WIDTH, SCREEN_HEIGHT,
                               SDL_WINDOW_SHOWN);
 
-    if (!window){
+    if (window == nullptr){
         std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
+        close();
         return;
     }
 
     // Create renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer){
+    if (renderer == nullptr){
         std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << "\n";
+        close();
         return;
     }
 
-    // TODO add layouts here
+    // Prepare texture for showing info
+    if (!load_texture(info_path)){
+        close();
+        return;
+    }
 
+    // create grid to draw into
+    create_grid();
 
     running = true;
-    gameLoop();
+    game_loop();
 }
 
+/* 
+Loop while program is alive.
+Delay changes to make it visually pleasing to user. 
 
-void Game::gameLoop()
+while true:
+    before = time before updates
+    make updates to game
+    after = time after updates
+
+    diff = time elapsed during updates
+    if diff < designed frame show time
+        delay remaining time (freeze image to screen)
+ */
+void Game::game_loop()
 {
-    Uint32 before, second = SDL_GetTicks(), after;
-    int frame_time, frames = 0;
+    // init vars;
+    Uint32 before;
+    Uint32 after;
 
-    while (running)
-    {
+    while (running){
         before = SDL_GetTicks();
 
+        // game control
         get_key_press();
-        update();
-        render();
+        handle_game_state();
         
-        frames++;
+        // delay if frame ready too early
         after = SDL_GetTicks();
-        frame_time = after - before;
-
-        if (after - second >= 1000)
+        int diff = after - before;
+        if (diff < FRAME_TIME_MS)
         {
-            frames = 0;
-            second = after;
-        }
-
-        if (FRAME_RATE > frame_time)
-        {
-            SDL_Delay(FRAME_RATE - frame_time);
+            SDL_Delay(FRAME_TIME_MS - diff);
         }
     }
 
 }
 
+ /*
+ Handles user interactions
 
+If info is to be shown: set game to pause and show info.
+Else if game is paused and info is not shown: show gameboard. If user has chosen to reset 'level' -> update gameboard to starting state.
+Else: make normal update and render it to screen.
+*/
+void Game::handle_game_state(){
+    if(info_shown){
+        is_paused = true;
+        render_info();
+    }
+    else if (is_paused && !info_shown){
+        if (do_reset){update_grid();}
+        render_grid();
+    }
+    else{
+        update_grid();
+        render_grid();
+    }
+}
+
+// Handle key input events
 void Game::get_key_press()
 {
     SDL_Event e;
@@ -116,20 +184,25 @@ void Game::get_key_press()
 
                 // random init
                 case SDLK_r:
-                    reset_board_random();
+                    reset_board_random(gameboard);
                     org_gameboard = gameboard;
+                    break;
+                
+                // show info
+                case SDLK_i:
+                    info_shown = !info_shown;
                     break;
             }
         }
     }
 }
 
-void Game::update()
+// update backend board using utils lib
+void Game::update_grid()
 {
-    // update board using utils lib
-    if (!is_paused){
-        this->gameboard = update_board(this->gameboard);
-    }
+    gameboard = update_board(gameboard);
+
+    // Reset gameboard to starting state
     if (do_reset){
         gameboard = org_gameboard;
         do_reset = false;
@@ -137,59 +210,90 @@ void Game::update()
 }
 
 
-void Game::reset_board_random(){
-    for (size_t row = 0; row < gameboard.size(); row++){
-        for (size_t col = 0; col < gameboard[0].size(); col++){
-            gameboard[row][col] = rndBtw::randomBetween(0, 1);
-        }
-    }
-}
+/* 
+Create grid only once and update it elsewhere.
 
-void Game::render()
-{
-    SDL_Rect rect;
+Window width and height cant always be divided equally.
+Some cells must be bigger than others.
+If cells would be equal size padding would result.
+If remainder size is not divided among as many cells as possible, some cells would be visually bigger than others.
+ */
+void Game::create_grid(){
+
+    // This is magical function, don't change anything!
     int w = SCREEN_WIDTH / GRID_WIDTH;
     int h = SCREEN_HEIGHT / GRID_HEIGHT;
     int padw = SCREEN_WIDTH % GRID_WIDTH;
     int padh = SCREEN_HEIGHT % GRID_HEIGHT;
 
-    // Clear screen and set all as non alive cells
-    SDL_SetRenderDrawColor(renderer, 0x1E, 0x1E, 0x1E, 0xFF);
-    SDL_RenderClear(renderer);
-
-    // Render cell color alive
-    SDL_SetRenderDrawColor(renderer, 0xFF, 0xCC, 0x00, 0xFF);
-
-    // Color all alive cells
     int cur_y {0};
     for (size_t y = 0; y < gameboard.size(); y++){
+        std::vector<SDL_Rect> row;
 
         int cur_x {0};
         int row_pad {padw};
+        int height {h + (padh > 0)};
 
         for (size_t x = 0; x < gameboard[0].size(); x++){
+            SDL_Rect rect;
+
             rect.x = cur_x;
             rect.y = cur_y;
             rect.w = w + (row_pad > 0);
-            rect.h = h + (padh > 0);
+            rect.h = height;
 
-            if (gameboard[y][x] == 1){
-                SDL_RenderFillRect(renderer, &rect);
-            }
             cur_x += rect.w;
             row_pad--;
+            row.push_back(rect);
         }
-        cur_y += rect.h;
+        cur_y += height;
         padh--;
+
+        gamegraphic.push_back(row);
+    }
+}
+
+ 
+//Color all cells in the layout based on backend gameboard.
+void Game::render_grid()
+{
+    // Set render to color all cells to dark gray.
+    SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+    SDL_RenderClear(renderer);
+
+    // Set render color 'golden'
+    SDL_SetRenderDrawColor(renderer, 255, 204, 0, 255);
+
+    // Color all alive cells
+    for (size_t y = 0; y < gameboard.size(); y++){
+        for (size_t x = 0; x < gameboard[0].size(); x++){
+
+            if (gameboard[y][x] == 1){
+                SDL_Rect& rect = gamegraphic[y][x];
+                SDL_RenderFillRect(renderer, &rect);
+            }
+        }
     }  
-    // Update Screen
+    // Update Game
     SDL_RenderPresent(renderer);
 }
 
 
+// Cleanup before exiting
 void Game::close()
 {
-    // Close Window and cleanup
+	// free loaded image
+	SDL_DestroyTexture(info_texture);
+	info_texture = nullptr;
+
+	// destroy renderer	
+	SDL_DestroyRenderer(renderer);
+	renderer = nullptr;
+
+    // close window
     SDL_DestroyWindow(window);
+	window = nullptr;
+
+    // cleanup sdl subsystems
     SDL_Quit();
 }
