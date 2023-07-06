@@ -71,4 +71,11 @@ TEST_CASE("Tests for utils -library's functions") {
         CHECK(board_wannebe_horizontal_blinker == board_horizontal_blinker);
         CHECK(board_wannebe_horizontal_blinker != board_empty);
     }
+
+    SUBCASE("Check file read") {
+        std::string file = "./data/test.txt";
+        GameBoard board_from_file = create_board(10,10);
+        file_to_board(board_from_file,file);
+        CHECK(get_n_alive_neighbors(board_from_file,0,0) == 3);
+    }
 }
