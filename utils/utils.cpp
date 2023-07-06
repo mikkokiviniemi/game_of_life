@@ -40,7 +40,7 @@ GameBoard create_board(int width, int height){
 }
 
 
-// print board temporary
+// print board cmd
 void print_board(const GameBoard& board){
     for (auto &&row : board){
         for (auto &&cell : row){
@@ -56,7 +56,6 @@ int get_n_alive_neighbors(const GameBoard& board, int cur_cell_row, int cur_cell
     int n_alive {0};
     int n_cols = board[0].size();
     int n_rows = board.size();
-
 
     // Start from previous row (-1)
     for (int row = -1; row < 2; row++){ 
@@ -74,15 +73,15 @@ int get_n_alive_neighbors(const GameBoard& board, int cur_cell_row, int cur_cell
     return n_alive - board[cur_cell_row][cur_cell_col];
 }
 
-
+// A new cell can be born if there are exactly three alive neighbours
 bool can_spawn(int cur_pos_value, int n_neighbours){
     return cur_pos_value == 0 && n_neighbours == 3;
 }
-
+// The old cell is destroyed if there are over three neighbours
 bool is_over_populated(int cur_pos_value, int n_neighbours){
     return cur_pos_value == 1 && n_neighbours > 3;
 }
-
+// The old cell is destroyed if there are less than two neighbours
 bool is_under_populated(int cur_pos_value, int n_neighbours){
     return cur_pos_value == 1 && n_neighbours < 2;
 }
@@ -121,7 +120,10 @@ GameBoard update_board(const GameBoard& current_board){
 }
 
 
-// Gets things from txt file to board
+/* 
+Gets patterns from txt file to board
+Draw patter starting from top left corner.
+ */
 void file_to_board(GameBoard& current_board, std::string& file_name){
 
     std::ifstream file_stream(file_name);
@@ -157,6 +159,15 @@ void file_to_board(GameBoard& current_board, std::string& file_name){
     current_board = updated_board;
     file_stream.close();
 
+}
+
+// Set board values to 0 or 1 randomly
+void reset_board_random(GameBoard& gameboard){
+    for (size_t row = 0; row < gameboard.size(); row++){
+        for (size_t col = 0; col < gameboard[0].size(); col++){
+            gameboard[row][col] = rndBtw::randomBetween(0, 1);
+        }
+    }
 }
 
 
