@@ -9,7 +9,7 @@ cd game_of_life
 cmake -S . -B build
 make -C build
 ```
-# Install for openSUSE Leap 15.5
+## Install for openSUSE Leap 15.5
 ```
 git clone https://github.com/mikkokiviniemi/game_of_life.git
 sudo zypper install libSDL2-devel
@@ -18,7 +18,7 @@ cd game_of_life
 cmake -S . -B build
 make -C build
 ```
-# Running
+## Running
 ```
 build/conway
 ```
