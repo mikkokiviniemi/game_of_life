@@ -41,6 +41,10 @@ std::vector<int> cmd_get_size(char** begin){
 
 // Check if user defined board size is valid
 bool is_valid_size(std::vector<int>& size){
+    if (size.size() != 2){
+        return false;
+    }
+
     int w = size[0];
     int h = size[1];
     return (w >= 3 && w < SCREEN_WIDTH) && (h >= 3 && h < SCREEN_HEIGHT);
@@ -65,8 +69,9 @@ void handleSizeOption(char** begin, char** end, GameBoard& board){
         // check if two numbers follow
         std::vector<int> size = unpack_size(begin, end);
         // two numbers found after -s
-        if (size.size() != 2){
+        if (!is_valid_size(size)){
             print_msg(ERROR_SIZE);
+            return;
         }
         // init board with user defined size
         board = create_board(size[0], size[1]);
@@ -106,25 +111,24 @@ int main(int argc, char* argv[])
     // some args
     if (argc > 1){
         
-         // find matching loc (location of argument end() if not found)
-        for (auto it = begin; it != end; it++){
-            const std::string* loc = findOption(CMD_OPTIONS.begin(), CMD_OPTIONS.end(), *it);
+        for (auto &&i : CMD_OPTIONS){
+            // find option from cmd args
+            auto it = std::find(begin, end, i);
 
-            if(*it == CMD_OPTIONS[0]){
+            if (it == end){continue;}
+
+            else if(i == CMD_OPTIONS[0]){
                 handleSizeOption(it + 1, end, board);
             }
-            // find args following this option eq. (-s int int)
-            else if(*it == CMD_OPTIONS[1]){
+            else if(i == CMD_OPTIONS[1]){
                 handlePathOption(it + 1, end, board);
             }
-        } 
-
+        }
     // no args
     } else {print_msg(NO_ARGS_MESSAGE);}
 
     // Print command line help to terminal.
     std::cout << "These are the command line options" << "\n";
-    print_msg("Set size before loading from a file");
     for (auto &&i : CMD_HELP){
         std::cout << i << "\n";
     }
