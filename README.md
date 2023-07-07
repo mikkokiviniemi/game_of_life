@@ -31,6 +31,6 @@ build/conway
 ![alt text](https://github.com/[mikkokiviniemi]/[game_of_life]/blob/[main]/examples/example3.png?raw=true)
 
 ## Team
-@ElisaHoo
-@holle1234
-@mikkokiviniemi
+- [ElisaHoo](https://github.com/ElisaHoo)
+- [holle1234](https://github.com/holle1234)
+- [mikkokiviniemi](https://github.com/mikkokiviniemi)
