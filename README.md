@@ -23,6 +23,6 @@ make -C build
 build/conway
 ```
 ## Team
-@ElisaHoo
-@holle1234
-@mikkokiviniemi
+[ElisaHoo](https://github.com/ElisaHoo)
+[holle1234](https://github.com/holle1234)
+[mikkokiviniemi](https://github.com/mikkokiviniemi)
