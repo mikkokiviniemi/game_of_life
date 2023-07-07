@@ -125,6 +125,7 @@ void Game::game_loop()
         
         // delay if frame ready too early
         after = SDL_GetTicks();
+
         int diff = after - before;
         if (diff < FRAME_TIME_MS)
         {
@@ -146,6 +147,10 @@ void Game::handle_game_state(){
         is_paused = true;
         render_info();
     }
+    else if(do_pattern){
+        is_paused = true;
+        render_grid();
+    }
     else if (is_paused && !info_shown){
         if (do_reset){update_grid();}
         render_grid();
@@ -163,6 +168,8 @@ void Game::get_key_press()
     while (SDL_PollEvent(&e))
     {
         if (e.type == SDL_QUIT){running = false;}
+
+        // query keyboard events
         else if (e.type == SDL_KEYDOWN)
         {
             switch (e.key.keysym.sym)
@@ -192,9 +199,55 @@ void Game::get_key_press()
                 case SDLK_i:
                     info_shown = !info_shown;
                     break;
+
+                // custom pattern mode
+                case SDLK_c:
+                    do_pattern = !do_pattern;
+                    break;
+
+                default: break;
             }
         }
+        // query mouse events if state is do_pattern
+        if (do_pattern && (e.type == SDL_MOUSEBUTTONDOWN)){
+            std::cout << "paat";
+            hand_color_cell();
+        }
     }
+}
+
+void Game::hand_color_cell(){
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    std::pair<int, int> board_xy = cell_from_coord(x, y);
+
+    // turn one to zero and vice versa
+    int& cell_cur = gameboard[board_xy.first][board_xy.second];
+    cell_cur = !bool(cell_cur);
+    
+    // update original as well
+    int& cell_org = gameboard[board_xy.first][board_xy.second];
+    cell_org = !bool(cell_org);
+}
+
+std::pair<int, int> Game::cell_from_coord(int x, int y){
+    // Find row and col where point resides
+    for (size_t row_ind = 0; row_ind < gamegraphic.size(); row_ind++){
+        std::vector<SDL_Rect>& row = gamegraphic[row_ind];
+
+        // mouse coord not in this row
+        if((row[0].y + row[0].h) < y){
+            continue;
+        }
+
+        for (size_t col_ind = 0; col_ind < row.size(); col_ind++){
+            // cell under this mouse position found, return gameboard loacation
+            if((row[col_ind].x + row[col_ind].w) > x){
+                return {row_ind, col_ind};
+            } 
+        }
+    }
+    return {0,0};
 }
 
 // update backend board using utils lib
@@ -253,13 +306,18 @@ void Game::create_grid(){
     }
 }
 
+
+void Game::clear_board(){
+    // Set render to color all cells to dark gray.
+    SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+    SDL_RenderClear(renderer);
+}
  
 //Color all cells in the layout based on backend gameboard.
 void Game::render_grid()
 {
-    // Set render to color all cells to dark gray.
-    SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
-    SDL_RenderClear(renderer);
+    // Clear from color
+    clear_board();
 
     // Set render color 'golden'
     SDL_SetRenderDrawColor(renderer, 255, 204, 0, 255);
