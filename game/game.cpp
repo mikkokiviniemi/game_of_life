@@ -292,7 +292,7 @@ void Game::update_grid()
 
 
 /* 
-Create grid only once and update it elsewhere.
+Divides screen pixels equally among grid cells.
 
 Window width and height cant always be divided equally.
 Some cells must be bigger than others.
@@ -301,7 +301,6 @@ If remainder size is not divided among as many cells as possible, some cells wou
  */
 void Game::create_grid(){
 
-    // This is magical function, don't change anything!
     int w = SCREEN_WIDTH / GRID_WIDTH;
     int h = SCREEN_HEIGHT / GRID_HEIGHT;
     int padw = SCREEN_WIDTH % GRID_WIDTH;

@@ -50,14 +50,6 @@ bool is_valid_size(std::vector<int>& size){
     return (w >= 3 && w < SCREEN_WIDTH) && (h >= 3 && h < SCREEN_HEIGHT);
 }
 
-
-// Find option location
-const std::string* findOption(const std::string* begin, const std::string* end, std::string query){
-    return std::find(begin, end, query);
-}
-
-
-
 // handle commands here (eq. check if following args are qualifiers needed)
 void handleSizeOption(char** begin, char** end, GameBoard& board){
 
@@ -96,8 +88,6 @@ void handlePathOption(char** begin, char** end, GameBoard& board){
 
     }
 }
-
-
 
 int main(int argc, char* argv[])
 {

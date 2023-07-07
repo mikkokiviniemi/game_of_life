@@ -20,8 +20,6 @@ void reset_board_random(GameBoard& gameboard);
 
 void print_msg(const std::string&);
 
-void print_board(const GameBoard &board);
-
 void file_to_board(GameBoard &current_board, std::string& file_name);
 
 bool can_spawn(int cur_pos_value, int n_neighbours);
