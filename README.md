@@ -22,6 +22,14 @@ make -C build
 ```
 build/conway
 ```
+
+## Examples
+![alt text](https://github.com/[mikkokiviniemi]/[game_of_life]/blob/[main]/examples/example1.png?raw=true)
+
+![alt text](https://github.com/[mikkokiviniemi]/[game_of_life]/blob/[main]/examples/example2.png?raw=true)
+
+![alt text](https://github.com/[mikkokiviniemi]/[game_of_life]/blob/[main]/examples/example3.png?raw=true)
+
 ## Team
 - [ElisaHoo](https://github.com/ElisaHoo)
 - [holle1234](https://github.com/holle1234)
