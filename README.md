@@ -24,7 +24,7 @@ build/conway
 ```
 
 ## Examples
-<img src="https://github.com/mikkokiviniemi/game_of_life/blob/60664b8b2187f8cda767a94b565b3d8603119881/resources/conway_info.bmp" width="200">
+<img src="https://github.com/mikkokiviniemi/game_of_life/blob/3a021a3adf90eed96d6fa10294df80dbc3072659/resources/conway_info.bmp" width="200">
 <img src="https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example2.png" width="200">
 <img src="https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example3.png" width="200">
 
