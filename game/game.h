@@ -3,6 +3,7 @@
 
 #include "../utils/utils.h"
 #include <vector>
+#include <array>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -11,9 +12,29 @@
 const int SCREEN_WIDTH   = 640;
 const int SCREEN_HEIGHT  = 640;
 
+const std::array<std::string, 4> WINDOW_TITLES {"Conway's Game of Life", 
+                                                "--PAUSE",
+                                                "--INFO",
+                                                "--DRAW"};
+
 
 // Graphical version of the layout
 using GameBoardGraphic = std::vector<std::vector<SDL_Rect>>;
+
+
+// Make a state that sets the colorinng mode
+// Set state with a key h
+// when state is coloring
+//  listen mouse clicks
+//  calculate cell based on mouse position
+//  if cell is alive: color it empty : otherwise color it alive
+// when coloring pause the program and render individual cell only
+
+
+// Make a save of the current program when pressed s
+
+
+
 
 
 /* 
@@ -62,10 +83,11 @@ private:
     GameBoardGraphic gamegraphic;
 
     // program running states
-    bool running   {false};
-    bool is_paused {false};
-    bool do_reset  {false};
-    bool info_shown {true};
+    bool running        {false};
+    bool is_paused      {false};
+    bool do_reset       {false};
+    bool info_shown     {true};
+    bool do_pattern     {false};
 
     // time one frame shows on the screen
     const int FRAME_TIME_MS = 100;
@@ -96,15 +118,24 @@ private:
     void render_grid();
     // Listens key events
     void get_key_press();
+    // Set window title
+    void set_title();
+    // Hand color fills a cell
+    void hand_color_cell();
     // quits the program
     void close();
     // Initializes board layout
     void create_grid();
+    // clears cur graphical board
+    void clear_board();
     // Draws info box to screen
     void render_info();
     // Loads image to texture
     bool load_texture(std::string path);
+    // Get cell from mouse coordinates
+    std::pair<int, int> cell_from_coord(int x, int y);
 };
+
 
 #endif
 

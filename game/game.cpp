@@ -64,7 +64,7 @@ void Game::run()
     }
 
     // Create Window
-    window = SDL_CreateWindow("Conway's Game of Life",
+    window = SDL_CreateWindow(WINDOW_TITLES[0].c_str(),
                               SDL_WINDOWPOS_CENTERED,
                               SDL_WINDOWPOS_CENTERED,
                               SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -122,9 +122,11 @@ void Game::game_loop()
         // game control
         get_key_press();
         handle_game_state();
+        set_title();
         
         // delay if frame ready too early
         after = SDL_GetTicks();
+
         int diff = after - before;
         if (diff < FRAME_TIME_MS)
         {
@@ -146,6 +148,10 @@ void Game::handle_game_state(){
         is_paused = true;
         render_info();
     }
+    else if(do_pattern){
+        is_paused = true;
+        render_grid();
+    }
     else if (is_paused && !info_shown){
         if (do_reset){update_grid();}
         render_grid();
@@ -163,6 +169,8 @@ void Game::get_key_press()
     while (SDL_PollEvent(&e))
     {
         if (e.type == SDL_QUIT){running = false;}
+
+        // query keyboard events
         else if (e.type == SDL_KEYDOWN)
         {
             switch (e.key.keysym.sym)
@@ -192,9 +200,82 @@ void Game::get_key_press()
                 case SDLK_i:
                     info_shown = !info_shown;
                     break;
+
+                // custom pattern mode
+                case SDLK_c:
+                    do_pattern = !do_pattern;
+                    break;
+
+                default: break;
             }
         }
+        // query mouse events if state is do_pattern
+        if (e.type == SDL_MOUSEBUTTONDOWN && do_pattern && !info_shown){
+            hand_color_cell();
+        }
     }
+}
+
+// Set window title based on game state
+void Game::set_title(){
+
+    std::string title;
+
+    if (info_shown){
+        title = WINDOW_TITLES[0] + " " + WINDOW_TITLES[2];
+    }
+    else if(do_pattern){
+        title = WINDOW_TITLES[0] + " " + WINDOW_TITLES[3];
+    }
+    else if(!info_shown && is_paused){
+        title = WINDOW_TITLES[0] + " " + WINDOW_TITLES[1];
+    }
+    else {
+        title = WINDOW_TITLES[0];
+    }
+
+    SDL_SetWindowTitle(window, title.c_str());
+}
+
+/* 
+Get mouse press coordinates from SDL.
+Find cell that corresponds to the coordinates.
+Change cell state.
+Render update.
+
+ */
+void Game::hand_color_cell(){
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    std::pair<int, int> board_xy = cell_from_coord(x, y);
+
+    // turn one to zero and vice versa
+    int& cell_cur {gameboard[board_xy.first][board_xy.second]};
+    cell_cur = cell_cur == 1 ? 0 : 1;
+
+    // update original as well
+    org_gameboard = gameboard;
+}
+
+// Find cell that corresponds to the window coordinates.
+std::pair<int, int> Game::cell_from_coord(int x, int y){
+    // Find row and col where point resides
+    for (size_t row_ind = 0; row_ind < gamegraphic.size(); row_ind++){
+        std::vector<SDL_Rect>& row = gamegraphic[row_ind];
+
+        // mouse coord not in this row
+        if((row[0].y + row[0].h) < y){
+            continue;
+        }
+
+        for (size_t col_ind = 0; col_ind < row.size(); col_ind++){
+            // cell under this mouse position found, return gameboard loacation
+            if((row[col_ind].x + row[col_ind].w) > x){
+                return {row_ind, col_ind};
+            } 
+        }
+    }
+    return {0,0};
 }
 
 // update backend board using utils lib
@@ -253,13 +334,19 @@ void Game::create_grid(){
     }
 }
 
+
+// Set render to color all cells to dark gray.
+void Game::clear_board(){
+    SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+    SDL_RenderClear(renderer);
+}
+ 
  
 //Color all cells in the layout based on backend gameboard.
 void Game::render_grid()
 {
-    // Set render to color all cells to dark gray.
-    SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
-    SDL_RenderClear(renderer);
+    // Clear from color
+    clear_board();
 
     // Set render color 'golden'
     SDL_SetRenderDrawColor(renderer, 255, 204, 0, 255);
