@@ -24,11 +24,11 @@ build/conway
 ```
 
 ## Examples
-![alt text](https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example1.png)
+![example1](https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example1.png=250x)
 
-![alt text](https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example2.png)
+![example2](https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example2.png=250x)
 
-![alt text](https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example3.png)
+![example3](https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example3.png=250x)
 
 ## Team
 - [ElisaHoo](https://github.com/ElisaHoo)
