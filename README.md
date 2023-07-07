@@ -33,9 +33,7 @@ build/conway -p "data/glider.txt
 ```
 ## Examples
 <img src="https://github.com/mikkokiviniemi/game_of_life/blob/3a021a3adf90eed96d6fa10294df80dbc3072659/resources/conway_info.bmp" width="200">
-<img src="https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example2.png" width="200">
-<img src="https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example3.png" width="200">
-
+<img src="https://github.com/mikkokiviniemi/game_of_life/blob/552d14a20ae00a1d07a52209a19689f8e75d92eb/examples/example.gif" width="200">
 
 ## Team
 - [ElisaHoo](https://github.com/ElisaHoo)
