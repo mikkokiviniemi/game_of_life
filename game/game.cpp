@@ -64,7 +64,7 @@ void Game::run()
     }
 
     // Create Window
-    window = SDL_CreateWindow("Conway's Game of Life",
+    window = SDL_CreateWindow(WINDOW_TITLES[0].c_str(),
                               SDL_WINDOWPOS_CENTERED,
                               SDL_WINDOWPOS_CENTERED,
                               SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -122,6 +122,7 @@ void Game::game_loop()
         // game control
         get_key_press();
         handle_game_state();
+        set_title();
         
         // delay if frame ready too early
         after = SDL_GetTicks();
@@ -209,27 +210,54 @@ void Game::get_key_press()
             }
         }
         // query mouse events if state is do_pattern
-        if (do_pattern && (e.type == SDL_MOUSEBUTTONDOWN)){
-            std::cout << "paat";
+        if (e.type == SDL_MOUSEBUTTONDOWN && do_pattern && !info_shown){
             hand_color_cell();
         }
     }
 }
 
+// Set window title based on game state
+void Game::set_title(){
+
+    std::string title;
+
+    if (info_shown){
+        title = WINDOW_TITLES[0] + " " + WINDOW_TITLES[2];
+    }
+    else if(do_pattern){
+        title = WINDOW_TITLES[0] + " " + WINDOW_TITLES[3];
+    }
+    else if(!info_shown && is_paused){
+        title = WINDOW_TITLES[0] + " " + WINDOW_TITLES[1];
+    }
+    else {
+        title = WINDOW_TITLES[0];
+    }
+
+    SDL_SetWindowTitle(window, title.c_str());
+}
+
+/* 
+Get mouse press coordinates from SDL.
+Find cell that corresponds to the coordinates.
+Change cell state.
+Render update.
+
+ */
 void Game::hand_color_cell(){
     int x, y;
     SDL_GetMouseState(&x, &y);
     std::pair<int, int> board_xy = cell_from_coord(x, y);
 
     // turn one to zero and vice versa
-    int& cell_cur = gameboard[board_xy.first][board_xy.second];
-    cell_cur = !bool(cell_cur);
-    
+    int& cell_cur {gameboard[board_xy.first][board_xy.second]};
+    cell_cur = cell_cur == 1 ? 0 : 1;
+
     // update original as well
-    int& cell_org = gameboard[board_xy.first][board_xy.second];
-    cell_org = !bool(cell_org);
+    org_gameboard = gameboard;
 }
 
+// Find cell that corresponds to the window coordinates.
 std::pair<int, int> Game::cell_from_coord(int x, int y){
     // Find row and col where point resides
     for (size_t row_ind = 0; row_ind < gamegraphic.size(); row_ind++){
@@ -307,11 +335,12 @@ void Game::create_grid(){
 }
 
 
+// Set render to color all cells to dark gray.
 void Game::clear_board(){
-    // Set render to color all cells to dark gray.
     SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
     SDL_RenderClear(renderer);
 }
+ 
  
 //Color all cells in the layout based on backend gameboard.
 void Game::render_grid()

@@ -3,6 +3,7 @@
 
 #include "../utils/utils.h"
 #include <vector>
+#include <array>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -10,6 +11,11 @@
 // Window size
 const int SCREEN_WIDTH   = 640;
 const int SCREEN_HEIGHT  = 640;
+
+const std::array<std::string, 4> WINDOW_TITLES {"Conway's Game of Life", 
+                                                "--PAUSE",
+                                                "--INFO",
+                                                "--DRAW"};
 
 
 // Graphical version of the layout
@@ -112,7 +118,9 @@ private:
     void render_grid();
     // Listens key events
     void get_key_press();
-    // Hand color fills a cell 
+    // Set window title
+    void set_title();
+    // Hand color fills a cell
     void hand_color_cell();
     // quits the program
     void close();
