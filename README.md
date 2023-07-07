@@ -29,7 +29,7 @@ build/conway -s 100 100
 ```
 ### Different pattern
 ```
-build/conway -p "filepath"
+build/conway -p "data/glider.txt
 ```
 ## Examples
 <img src="https://github.com/mikkokiviniemi/game_of_life/blob/3a021a3adf90eed96d6fa10294df80dbc3072659/resources/conway_info.bmp" width="200">
