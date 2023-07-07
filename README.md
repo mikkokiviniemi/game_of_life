@@ -22,3 +22,7 @@ make -C build
 ```
 build/conway
 ```
+## Team
+@ElisaHoo
+@holle1234
+@mikkokiviniemi
