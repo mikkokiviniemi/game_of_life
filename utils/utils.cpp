@@ -39,18 +39,6 @@ GameBoard create_board(int width, int height){
     return array_2d;
 }
 
-
-// print board cmd
-void print_board(const GameBoard& board){
-    for (auto &&row : board){
-        for (auto &&cell : row){
-            std::cout << cell << " ";
-        }
-        std::cout << "\n";
-    }
-}
-
-
 // Calculates the total number of alive neighbors for a specific cell.
 int get_n_alive_neighbors(const GameBoard& board, int cur_cell_row, int cur_cell_col){
     int n_alive {0};
