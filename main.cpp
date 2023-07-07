@@ -22,7 +22,7 @@ const std::array<std::string, 2> CMD_HELP{"-p  [string]  path to pattern",
 
 
 // Messages
-const std::string ERROR_SIZE = "Invalid size! Size must be atleast 3x3 and less than 640x640. Using default values";
+const std::string ERROR_SIZE = "Invalid size! Size must be atleast 3x3 and less than 640x640. Using default size of 50x50";
 const std::string NO_ARGS_MESSAGE = "No args supplied. Using default size of 50x50.";
 
 
@@ -60,12 +60,18 @@ void handleOptions(char** begin, char** end, const std::string& option, GameBoar
     int dist = std::distance(begin, end);
     
     // size
-    if (option == CMD_OPTIONS[1] && dist >= 2){
+    if (option == CMD_OPTIONS[1]){
+        if (dist < 2){
+            print_msg(ERROR_SIZE);
+            return;
+        }
+
         // check if two numbers follow
         std::vector<int> size = unpack_size(begin, end);
         // two numbers found after -s
-        if (size.size() != 2){
+        if (size.size() != 2 || !is_valid_size(size)){
             print_msg(ERROR_SIZE);
+            return;
         }
         // init board with user defined size
         board = create_board(size[0], size[1]);
@@ -82,7 +88,6 @@ void handleOptions(char** begin, char** end, const std::string& option, GameBoar
 
     }
 }
-
 
 
 int main(int argc, char* argv[])
