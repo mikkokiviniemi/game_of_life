@@ -19,10 +19,18 @@ cmake -S . -B build
 make -C build
 ```
 ## Running
+### Basic
 ```
 build/conway
 ```
-
+### Different size (100x100)
+```
+build/conway -s 100 100
+```
+### Different pattern
+```
+build/conway -p "filepath"
+```
 ## Examples
 <img src="https://github.com/mikkokiviniemi/game_of_life/blob/3a021a3adf90eed96d6fa10294df80dbc3072659/resources/conway_info.bmp" width="200">
 <img src="https://github.com/mikkokiviniemi/game_of_life/blob/771b4747b847a133686a50356a1e675244d7d7c9/examples/example2.png" width="200">
