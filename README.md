@@ -2,15 +2,16 @@
 
 [Community website](https://conwaylife.com/)
 
-## Install
+## Install for Ubuntu 22.04
 ```
 git clone git@github.com:mikkokiviniemi/game_of_life.git
+sudo apt-get install libsdl2-dev
+sudo apt-get install libsdl2-image-dev
+cd game_of_life
+cmake -S . -B build
+make -C build
 ```
 # Running
 ```
-cd game_of_life
-sudo apt-get install libsdl2-image-dev
-cmake -S . -B build
-make -C build
 build/conway
 ```
