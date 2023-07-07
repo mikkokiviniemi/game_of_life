@@ -4,3 +4,5 @@ changelog:
   gui added
   gui pad fix with support for older sdl
   cmd args with messages and error handling
+  custom pattern draw and window titles
+  
